@@ -3,7 +3,7 @@
 
 import * as React from 'react'
 
-function Greeting({initialName = ''}) {
+function Greeting({ initialName = '' }) {
 
   const [name, setName] = React.useState(initialName);
   const [showName, setshowName] = React.useState(false);
@@ -37,8 +37,8 @@ function Greeting({initialName = ''}) {
 
 //   const [showResult, setShowResult] = React.useState(false);
 
-//   function handleChange(e) {  
-//     const {value} = e.target;
+//   function handleChange(e) {
+//     const { value } = e.target;
 //     setCount(Number(value));
 //   }
 
@@ -61,7 +61,7 @@ function Greeting({initialName = ''}) {
 //           <input type="number" id="increment-inp" onChange={handleChange} />
 //         </div>
 //         <button onClick={handleClick} >add</button>
-//         {showResult ? <h3 style={{color: '#fff', padding: '2rem', backgroundColor: 'teal'}}>{result}</h3> : null}
+//         {showResult ? <h3 style={{ color: '#fff', padding: '2rem', backgroundColor: 'teal' }}>{result}</h3> : null}
 //       </form>
 //     </div>
 //   )

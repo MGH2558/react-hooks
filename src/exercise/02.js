@@ -3,26 +3,41 @@
 
 import * as React from 'react'
 
-function Greeting({ initialName = '' }) {
+function useLocalStorageState(key, defaultValue = '', { serialize = JSON.stringify, deserialize = JSON.parse } = {}) {
+  const [state, setState] = React.useState(() => {
+    const valueInLocalStorage = window.localStorage.getItem(key);
 
-  const storedName = localStorage.getItem('name');
-  const [name, setName] = React.useState(storedName || initialName);
-
-  
-  React.useEffect(() => {
-    localStorage.setItem('name', name);
-    console.log(storedName);
+    return valueInLocalStorage ? deserialize(valueInLocalStorage) : (typeof defaultValue === 'function' ? defaultValue() : defaultValue);
   })
 
+  const prevKeyRef = React.useRef(key);
+
+  React.useEffect(() => {
+    const prevKey = prevKeyRef.current;
+    if (prevKey !== key) {
+      window.localStorage.removeItem(prevKey);
+    }
+    prevKeyRef.current = key;
+
+    window.localStorage.setItem(key, serialize(state));
+  }, [key, serialize, state])
+
+  return [state, setState]
+}
+
+
+function Greeting({ initialName = '' }) {
+  const [name, setName] = useLocalStorageState('name', initialName);
 
   function handleChange(event) {
     const { value } = event.target;
     setName(value.trim());
   }
 
+  console.log(`name: ${localStorage.getItem('name')}`);
 
   return (
-    <div> 
+    <div>
       <form>
         <label htmlFor="name">Name: </label>
         <input value={name.trim()} onChange={handleChange} id="name" />
