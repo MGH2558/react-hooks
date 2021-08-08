@@ -36,61 +36,97 @@ function capitalFirstLetter(word) {
   return firstLetter + rest;
 }
 
-function AddTodo() {
-  const [task, setTask] = React.useState('');
+
+
+function AddTodo({ setTask }) {
+  const [value, setValue] = React.useState("type something...");
 
   const style = {
     titleStyle: { color: 'gold', padding: '1rem', borderRadius: '.9rem' },
-    btnStyle: { color: '#000', marginLeft: '1rem', backgroundColor: task ? 'limegreen' : 'gold', borderRadius: '.2rem', padding: '.2rem .8rem', width: '124.141px', opacity: task ? 1 : .7 },
+    btnStyle: { color: value ? '#fff' : '#000', marginLeft: '1rem', backgroundColor: value ? 'limegreen' : 'gold', opacity: value ? 1 : .5, borderRadius: '.2rem', padding: '.2rem .8rem', width: '124.141px' },
     inputStyle: { borderRadius: '.2rem', padding: '.3rem', fontSize: '110%' }
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    console.log(`${task} added.`)
   }
 
   function handleChange(e) {
     const { value } = e.target;;
-    setTask(capitalFirstLetter(value))
+    setValue(capitalFirstLetter(value))
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    setTask((prevState) => ([...prevState, value]))
   }
 
   return (
     <>
       <h2 style={style.titleStyle}>The best TODO app ever !</h2>
       <form onSubmit={handleSubmit}>
-        <input style={style.inputStyle} onChange={handleChange} value={task} placeholder="add a task" />
-        <button style={style.btnStyle} disabled={!Boolean(task)} type="submit" >{task ? 'Add' : 'insert a task'}</button>
+        <input style={style.inputStyle} onChange={handleChange} value={value} placeholder="add a task" />
+        <button style={style.btnStyle} disabled={!Boolean(value)} type="submit" >
+          Add
+        </button>
       </form>
     </>
   )
 }
 
-function TodoList() {
+
+
+function TodoList({ tasks }) {
   const listStyle = { padding: '0' }
-  const itemStyle = { marginLeft: '.1rem', padding: '.3rem', backgroundColor: 'lightblue', margin: '1rem', color: '#333' }
+  const itemStyle = {
+    mainStyle: {
+      marginLeft: '.1rem', padding: '.3rem 1rem', backgroundColor: 'lightblue', margin: '1rem', color: '#333', display: 'flex', justifyContent: 'space-between', borderRadius: '.1rem',
+    },
+    removeBtnStyle: { backgroundColor: 'red', color: '#fff' }
+  }
+
+  React.useEffect(() => {
+    console.log(`Updated task list: ${tasks}`)
+  }, [tasks])
+
 
   return (
     <ol style={listStyle}>
-      <li style={itemStyle}>Hello</li>
+      {tasks.length ? tasks.map((task, index) => (<li style={itemStyle.mainStyle} key={`${task}-${index}`}>{task}</li>)) : <h3>Task list is empty!</h3>}
     </ol>
   )
 }
 
 
-function Parent() {
+
+function Container() {
   const parentStyle = { backgroundColor: 'crimson', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '3rem', fontFamily: 'cursive' }
-  // const childStyle = {width: '100%', maxWidth: '50%', border: '1px dashed lightblue',borderRadius: '.3rem', padding: '1rem'}
+  const [tasks, setTask] = React.useState([])
+
+  // function removeAllSpaces(str) {
+  //   return str.replace(/\s/g, '')
+  // }
+
+
   return (
     <div style={parentStyle}>
       <div>
-        <AddTodo />
-        <TodoList />
+        <AddTodo setTask={setTask} />
+        <TodoList tasks={tasks} />
       </div>
     </div>
   )
 }
+
+
+
+function App() {
+  return <Container />
+}
+
+
+
+
+
+
+
+
 // function Math() {
 
 //   const [count, setCount] = React.useState(0);
@@ -127,11 +163,5 @@ function Parent() {
 //     </div>
 //   )
 // }
-
-function App() {
-  return <Parent />
-
-  // return <Math />
-}
 
 export default App
