@@ -2,6 +2,7 @@
 // http://localhost:3000/isolated/exercise/06.js
 
 import * as React from 'react'
+import { ErrorBoundary } from 'react-error-boundary';
 import {
   PokemonInfoFallback,
   PokemonForm,
@@ -10,16 +11,21 @@ import {
   PokemonErrorBoundary,
 } from '../pokemon'
 
-// class ErrorBoundary extends React.Component {
 
-//   render() {
-//     return console.log('Test');
-//   }
-// }
+function ErrorFallback({ error,resetErrorBoundary }) {
+  return (
+    <div role="alert">
+      There was an error:
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary} >Try again</button>
+    </div>
+  )
+}
+
 
 function PokemonInfo({ pokemonName }) {
   const [state, setState] = React.useState({
-    status: 'idle',
+    status: pokemonName ? 'pending' : 'idle',
     pokemon: null,
     error: null,
   })
@@ -46,20 +52,16 @@ function PokemonInfo({ pokemonName }) {
     return <PokemonInfoFallback name={pokemonName} />
   }
   else if (status === 'rejected') {
-    return (
-      <div role="alert">
-        There was an error: ' '
-        <span>{error.message}</span>
-        <pre>Could not find "{pokemonName}"</pre>
-      </div>
-    )
+    // this will be handled by our error boundary
+    throw error;
   }
   else if (status === 'resolved') {
-    return <PokemonDataView pokemon={null} />
+    return <PokemonDataView pokemon={pokemon} />
   }
   throw new Error('This is impossible :|');
 
 }
+
 
 function App() {
   const [pokemonName, setPokemonName] = React.useState('')
@@ -68,15 +70,23 @@ function App() {
     setPokemonName(newPokemonName)
   }
 
+  function handleReset() {
+    setPokemonName('');
+  }
+
   return (
     <div className="pokemon-info-app">
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <PokemonInfo pokemonName={pokemonName} />
+        <ErrorBoundary onReset={handleReset} FallbackComponent={ErrorFallback} resetKeys={[pokemonName]}>
+          <PokemonInfo pokemonName={pokemonName} />
+        </ErrorBoundary>
       </div>
     </div>
   )
 }
+
+
 
 export default App
