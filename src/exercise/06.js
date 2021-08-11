@@ -2,30 +2,63 @@
 // http://localhost:3000/isolated/exercise/06.js
 
 import * as React from 'react'
-// 🐨 you'll want the following additional things from '../pokemon':
-// fetchPokemon: the function we call to get the pokemon info
-// PokemonInfoFallback: the thing we show while we're loading the pokemon info
-// PokemonDataView: the stuff we use to display the pokemon info
-import {PokemonForm} from '../pokemon'
+import {
+  PokemonInfoFallback,
+  PokemonForm,
+  PokemonDataView,
+  fetchPokemon,
+  PokemonErrorBoundary,
+} from '../pokemon'
 
-function PokemonInfo({pokemonName}) {
-  // 🐨 Have state for the pokemon (null)
-  // 🐨 use React.useEffect where the callback should be called whenever the
-  // pokemon name changes.
-  // 💰 DON'T FORGET THE DEPENDENCIES ARRAY!
-  // 💰 if the pokemonName is falsy (an empty string) then don't bother making the request (exit early).
-  // 🐨 before calling `fetchPokemon`, clear the current pokemon state by setting it to null
-  // 💰 Use the `fetchPokemon` function to fetch a pokemon by its name:
-  //   fetchPokemon('Pikachu').then(
-  //     pokemonData => { /* update all the state here */},
-  //   )
-  // 🐨 return the following things based on the `pokemon` state and `pokemonName` prop:
-  //   1. no pokemonName: 'Submit a pokemon'
-  //   2. pokemonName but no pokemon: <PokemonInfoFallback name={pokemonName} />
-  //   3. pokemon: <PokemonDataView pokemon={pokemon} />
+// class ErrorBoundary extends React.Component {
 
-  // 💣 remove this
-  return 'TODO'
+//   render() {
+//     return console.log('Test');
+//   }
+// }
+
+function PokemonInfo({ pokemonName }) {
+  const [state, setState] = React.useState({
+    status: 'idle',
+    pokemon: null,
+    error: null,
+  })
+  const { status, pokemon, error } = state;
+
+  React.useEffect(() => {
+    if (!pokemonName) {
+      return;
+    }
+    setState({ status: 'pending' });
+    fetchPokemon(pokemonName, 200)
+      .then(
+        pokemon => setState({ pokemon, status: 'resolved' }),
+        error => setState({ error, status: 'rejected' })
+      )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pokemonName])
+
+
+  if (status === 'idle') {
+    return 'submit a pokemon'
+  }
+  else if (status === 'pending') {
+    return <PokemonInfoFallback name={pokemonName} />
+  }
+  else if (status === 'rejected') {
+    return (
+      <div role="alert">
+        There was an error: ' '
+        <span>{error.message}</span>
+        <pre>Could not find "{pokemonName}"</pre>
+      </div>
+    )
+  }
+  else if (status === 'resolved') {
+    return <PokemonDataView pokemon={null} />
+  }
+  throw new Error('This is impossible :|');
+
 }
 
 function App() {

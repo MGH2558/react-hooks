@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {ErrorBoundary} from 'react-error-boundary'
+import { ErrorBoundary } from 'react-error-boundary'
 
 const formatDate = date =>
   `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${String(
@@ -36,11 +36,11 @@ function fetchPokemon(name, delay = 1500) {
       },
       body: JSON.stringify({
         query: pokemonQuery,
-        variables: {name: name.toLowerCase()},
+        variables: { name: name.toLowerCase() },
       }),
     })
     .then(async response => {
-      const {data} = await response.json()
+      const { data } = await response.json()
       if (response.ok) {
         const pokemon = data?.pokemon
         if (pokemon) {
@@ -59,7 +59,7 @@ function fetchPokemon(name, delay = 1500) {
     })
 }
 
-function PokemonInfoFallback({name}) {
+function PokemonInfoFallback({ name }) {
   const initialName = React.useRef(name).current
   const fallbackPokemonData = {
     name: initialName,
@@ -67,8 +67,8 @@ function PokemonInfoFallback({name}) {
     image: '/img/pokemon/fallback-pokemon.jpg',
     attacks: {
       special: [
-        {name: 'Loading Attack 1', type: 'Type', damage: 'XX'},
-        {name: 'Loading Attack 2', type: 'Type', damage: 'XX'},
+        { name: 'Loading Attack 1', type: 'Type', damage: 'XX' },
+        { name: 'Loading Attack 2', type: 'Type', damage: 'XX' },
       ],
     },
     fetchedAt: 'loading...',
@@ -76,7 +76,7 @@ function PokemonInfoFallback({name}) {
   return <PokemonDataView pokemon={fallbackPokemonData} />
 }
 
-function PokemonDataView({pokemon}) {
+function PokemonDataView({ pokemon }) {
   return (
     <div>
       <div className="pokemon-info__img-wrapper">
@@ -125,7 +125,9 @@ function PokemonForm({
   }, [externalPokemonName])
 
   function handleChange(e) {
-    setPokemonName(e.target.value)
+    const { value } = e.target;
+    setPokemonName(value);
+    // value ? setPokemonName(value) : onSubmit(value);
   }
 
   function handleSubmit(e) {
@@ -141,31 +143,11 @@ function PokemonForm({
   return (
     <form onSubmit={handleSubmit} className="pokemon-form">
       <label htmlFor="pokemonName-input">Pokemon Name</label>
-      <small>
-        Try{' '}
-        <button
-          className="invisible-button"
-          type="button"
-          onClick={() => handleSelect('pikachu')}
-        >
-          "pikachu"
-        </button>
+      <small> Try{' '} <button className="invisible-button" type="button" onClick={() => handleSelect('pikachu')} > "pikachu" </button>
         {', '}
-        <button
-          className="invisible-button"
-          type="button"
-          onClick={() => handleSelect('charizard')}
-        >
-          "charizard"
-        </button>
+        <button className="invisible-button" type="button" onClick={() => handleSelect('charizard')} > "charizard" </button>
         {', or '}
-        <button
-          className="invisible-button"
-          type="button"
-          onClick={() => handleSelect('mew')}
-        >
-          "mew"
-        </button>
+        <button className="invisible-button" type="button" onClick={() => handleSelect('mew')}> "mew" </button>
       </small>
       <div>
         <input
@@ -184,11 +166,11 @@ function PokemonForm({
   )
 }
 
-function ErrorFallback({error, resetErrorBoundary}) {
+function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div role="alert">
       There was an error:{' '}
-      <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+      <pre style={{ whiteSpace: 'normal' }}>{error.message}</pre>
       <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   )

@@ -10,25 +10,25 @@ import {
   PokemonDataView,
 } from '../pokemon'
 
-function PokemonInfo({pokemonName}) {
+function PokemonInfo({ pokemonName }) {
   const [state, setState] = React.useState({
     status: 'idle',
     pokemon: null,
     error: null,
   })
-  const {status, pokemon, error} = state
+  const { status, pokemon, error } = state
 
   React.useEffect(() => {
     if (!pokemonName) {
       return
     }
-    setState({status: 'pending'})
+    setState({ status: 'pending' })
     fetchPokemon(pokemonName).then(
       pokemon => {
-        setState({status: 'resolved', pokemon})
+        setState({ status: 'resolved', pokemon })
       },
       error => {
-        setState({status: 'rejected', error})
+        setState({ status: 'rejected', error })
       },
     )
   }, [pokemonName])
@@ -41,7 +41,7 @@ function PokemonInfo({pokemonName}) {
     return (
       <div>
         There was an error:{' '}
-        <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+        <pre style={{ whiteSpace: 'normal' }}>{error.message}</pre>
       </div>
     )
   } else if (status === 'resolved') {
